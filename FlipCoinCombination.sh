@@ -153,3 +153,68 @@ do
     triplet_frequency[$combination]=$percentage
     echo "percentage of $combination is ${triplet_frequency[$combination]}%"   
 done 
+
+
+#extracting keys and values
+singlet_combinations=( ${!singlet_frequency[@]} )
+singlet_combination_percentages=( ${singlet_frequency[@]} )
+
+doublet_combinations=( ${!doublet_frequency[@]} )
+doublet_combination_percentages=( ${doublet_frequency[@]} )
+
+triplet_combinations=( ${!triplet_frequency[@]} )
+triplet_combination_percentages=( ${triplet_frequency[@]} )
+
+
+#appending all 3 arrays and assigning into other array
+total_combinations+=( ${singlet_combinations[@]} ${doublet_combinations[@]} ${triplet_combinations[@]} )
+total_combination_percentages+=( ${singlet_combination_percentages[@]} ${doublet_combination_percentages[@]} ${triplet_combination_percentages[@]} )
+
+
+
+echo "---------------------------SORTING---------------------------"
+echo  "sorted singlet percentages:"
+echo "$( printf "%s\n" "${singlet_combination_percentages[@]}" | sort -n ) "
+
+echo  "sorted doublet percentages:"
+echo "$( printf "%s\n" "${doublet_combination_percentages[@]}" | sort -n ) "
+
+echo  "sorted triplet percentages:"
+echo "$( printf "%s\n" "${triplet_combination_percentages[@]}" | sort -n ) "
+
+#function
+
+print_winner ()
+{
+    #Inside the function, using local -n ref=$1 to declare a nameref to the variable named by $1, meaning it's not a reference to $1 itself, but rather to a variable whose name $1 holds
+    local -n keys=$1
+    local -n values=$2
+
+    max_value=0
+    max_value_index=0
+    for(( i = 0; i < ${#values[@]}; i++ ))
+    do
+        if(( values[i] >= max_value ))
+        then    
+                max_value=${values[i]}
+                max_value_index=$i
+        fi
+    done
+    echo "The winning combination is ${keys[$max_value_index]} with ${max_value}%" 
+}
+
+
+echo "---------------------------WINNERS---------------------------"
+echo "For Singlet Combination"
+print_winner singlet_combinations singlet_combination_percentages
+echo 
+echo "For Doublet Combination"
+print_winner doublet_combinations doublet_combination_percentages
+echo
+
+echo "For Triplet Combination"
+print_winner triplet_combinations triplet_combination_percentages
+echo
+
+echo "For All Combinations"
+print_winner total_combinations total_combination_percentages
